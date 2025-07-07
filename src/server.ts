@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-console */
 //** All Imports **//
 
 import { Server } from "http";
