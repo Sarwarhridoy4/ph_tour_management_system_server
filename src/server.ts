@@ -1,10 +1,10 @@
-/* eslint-disable no-undef */
 /* eslint-disable no-console */
 //** All Imports **//
 
 import { Server } from "http";
 import mongoose from "mongoose";
 import app from "./app";
+import { envVariable, isDevelopment, isProduction } from "./app/config/env";
 
 //** All Imports End **//
 //** Server Declaration **//
@@ -16,15 +16,23 @@ let server: Server;
  */
 
 const startServer = async () => {
+  // Check if the environment is production
+  if (envVariable?.NODE_ENV === "production") {
+    console.log("Running in production mode");
+  }
+  // Check if the environment is development
+  else if (envVariable?.NODE_ENV === "development") {
+    console.log("Running in development mode");
+  }
   try {
     // Connect to MongoDB
-    const mongoUrl =
-      process.env.MONGODB_URL || "mongodb://localhost:27017/ph_tour_management";
+    const mongoUrl = envVariable?.MONGODB_URL as string;
+    console.log("Connecting to MongoDB to:", isProduction ? "Production URL" : isDevelopment ? "Development URL" : "Localhost");
     await mongoose.connect(mongoUrl);
     console.log("Connected to MongoDB");
 
     // Start the server
-    const port = process.env.PORT || 5555;
+    const port = envVariable?.PORT || 5555;
     server = app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });
@@ -98,5 +106,3 @@ process.on("SIGINT", () => {
 // setTimeout(() => {
 //   process.kill(process.pid, "SIGTERM");
 // }, 5000);
-
-

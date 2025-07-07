@@ -21,5 +21,18 @@ export default tseslint.config(
       "@typescript-eslint/no-var-requires": "off",
     },
     ignores: ["**/dist/**", "**/node_modules/**"],
+    languageOptions: {
+      parserOptions: {
+        ecmaVersion: 2020,
+        sourceType: "module",
+      },
+      globals: {
+        process: "readonly",
+        console: "readonly",
+        module: "readonly",
+        __filename: "readonly",
+        __dirname: "readonly",
+      },
+    },
   }
 );
