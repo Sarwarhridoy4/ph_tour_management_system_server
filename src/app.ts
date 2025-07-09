@@ -1,7 +1,10 @@
 // src/app.ts
+// all imports
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import { router } from "./app/routes";
+import { globalErrorHandler } from "./app/middlewares/globalErrorHandler";
+import notFound from "./app/middlewares/notFound";
 
 const app: Application = express();
 
@@ -15,5 +18,9 @@ app.get("/", (_req: Request, res: Response) => {
     message: "Welcome to PH Tour Management System API",
   });
 });
+
+app.use(globalErrorHandler);
+
+app.use(notFound);
 
 export default app;
