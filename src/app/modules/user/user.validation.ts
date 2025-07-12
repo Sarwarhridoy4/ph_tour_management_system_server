@@ -87,12 +87,7 @@ export const CreateUserZodSchema = z.object({
     })
     .optional(),
 
-  isActive: z
-    .nativeEnum(isActive, {
-      required_error: "isActive status is required",
-      invalid_type_error: "Invalid isActive value",
-    })
-    .optional(),
+  isActive: z.enum(Object.values(isActive) as [string]).optional(),
 
   isVerified: z
     .boolean({
@@ -101,12 +96,7 @@ export const CreateUserZodSchema = z.object({
     })
     .optional(),
 
-  role: z
-    .nativeEnum(Role, {
-      required_error: "User role is required",
-      invalid_type_error: "Invalid user role",
-    })
-    .optional(),
+  role: z.enum(Object.values(Role) as [string]).optional(),
 
   auths: z
     .array(authProviderSchema, {
@@ -178,7 +168,8 @@ export const UpdateUserZodSchema = z.object({
     })
     .regex(/(?=.*[!@#$%^&*()_\-+={}[\]|\\:;"'<>,.?/~`])/, {
       message: "Password must contain at least one special character",
-    }).optional(),
+    })
+    .optional(),
 
   address: z
     .string({
@@ -193,12 +184,7 @@ export const UpdateUserZodSchema = z.object({
     })
     .optional(),
 
-  isActive: z
-    .nativeEnum(isActive, {
-      required_error: "isActive status is required",
-      invalid_type_error: "Invalid isActive value",
-    })
-    .optional(),
+  isActive: z.enum(Object.values(isActive) as [string]).optional(),
 
   isVerified: z
     .boolean({
@@ -207,12 +193,7 @@ export const UpdateUserZodSchema = z.object({
     })
     .optional(),
 
-  role: z
-    .nativeEnum(Role, {
-      required_error: "User role is required",
-      invalid_type_error: "Invalid user role",
-    })
-    .optional(),
+  role: z.enum(Object.values(Role) as [string]).optional(),
 
   auths: z
     .array(authProviderSchema, {
