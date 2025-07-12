@@ -6,6 +6,7 @@ const createUserService = async (payload: Partial<IUser>) => {
   const user = await User.create({
     name,
     email,
+    ...payload,
   });
 
   return user;
