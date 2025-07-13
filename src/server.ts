@@ -5,6 +5,7 @@ import { Server } from "http";
 import mongoose from "mongoose";
 import app from "./app";
 import { envVariable, isDevelopment, isProduction } from "./app/config/env";
+import { seedSuperAdmin } from "./app/utils/seedSuperAdmin";
 
 //** All Imports End **//
 //** Server Declaration **//
@@ -27,7 +28,14 @@ const startServer = async () => {
   try {
     // Connect to MongoDB
     const mongoUrl = envVariable?.MONGODB_URL as string;
-    console.log("Connecting to MongoDB to:", isProduction ? "Production URL" : isDevelopment ? "Development URL" : "Localhost");
+    console.log(
+      "Connecting to MongoDB to:",
+      isProduction
+        ? "Production URL"
+        : isDevelopment
+        ? "Development URL"
+        : "Localhost"
+    );
     await mongoose.connect(mongoUrl);
     console.log("Connected to MongoDB");
 
@@ -40,8 +48,11 @@ const startServer = async () => {
     console.error("Error starting the server:", error);
   }
 };
-// call the startServer function to initiate the server
-startServer();
+// call the startServer function to initiate the server and create super admin
+(async () => {
+  startServer();
+  seedSuperAdmin();
+})();
 
 //unhandledRejection and uncaughtException handlers
 process.on("unhandledRejection", (error) => {

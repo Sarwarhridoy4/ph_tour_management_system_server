@@ -11,6 +11,8 @@ interface EnvVariable {
   JWT_ALGORITHM: string;
   JWT_EXPIRES_IN: string;
   JWT_SALT_ROUND: string;
+  SUPER_ADMIN_EMAIL: string;
+  SUPER_ADMIN_PASSWORD: string;
 }
 
 export const envVariable: EnvVariable = {
@@ -21,6 +23,8 @@ export const envVariable: EnvVariable = {
   JWT_ALGORITHM: process.env.JWT_ALGORITHM as string,
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN as string,
   JWT_SALT_ROUND: process.env.JWT_SALT_ROUND as string,
+  SUPER_ADMIN_EMAIL: process.env.SUPER_ADMIN_EMAIL as string,
+  SUPER_ADMIN_PASSWORD: process.env.SUPER_ADMIN_PASSWORD as string,
 };
 export const isProduction = envVariable.NODE_ENV === "production";
 export const isDevelopment = envVariable.NODE_ENV === "development";
