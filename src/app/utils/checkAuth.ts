@@ -26,7 +26,7 @@ export const checkAuth =
       if (authRoles.includes(verifiedToken?.role)) {
         throw new AppError(httpStatus.UNAUTHORIZED, "You Are Not Allowed!");
       }
-
+      req.user = verifiedToken;
       next();
     } catch (error) {
       next(error);
