@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { UserControllers } from "./user.controller";
-import { CreateUserZodSchema } from "./user.validation";
+import { CreateUserZodSchema, UpdateUserZodSchema } from "./user.validation";
 import { validateRequest } from "../../utils/validateRequest";
 
 const router = Router();
@@ -10,6 +10,10 @@ router.post(
   validateRequest(CreateUserZodSchema),
   UserControllers.createUser
 );
-router.get("/all-users", UserControllers.getAllUsers);
+router.get(
+  "/all-users",
+  validateRequest(UpdateUserZodSchema),
+  UserControllers.getAllUsers
+);
 
 export const UserRoutes = router;

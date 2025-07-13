@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 
 /* eslint-disable no-unused-vars */
 export interface IAuthProvider {
-  provider: string /* e.g., 'google', 'facebook', 'github' ,credential*/;
+  provider: 'credential'|'google' /* e.g., 'google', 'facebook', 'github' ,credential*/;
   providerId: string;
   accessToken?: string;
   refreshToken?: string;
