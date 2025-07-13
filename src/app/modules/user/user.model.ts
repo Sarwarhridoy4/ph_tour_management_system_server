@@ -22,7 +22,7 @@ const userScheme = new Schema<IUser>(
       unique: true,
       index: true,
     },
-    password: { type: String, select: false }, // never return by default
+    password: { type: String },
     phone: { type: String },
     picture: { type: String },
     address: { type: String },

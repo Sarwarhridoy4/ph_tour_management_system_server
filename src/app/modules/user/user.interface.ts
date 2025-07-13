@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 
 /* eslint-disable no-unused-vars */
 export interface IAuthProvider {
-  provider: string /* e.g., 'google', 'facebook', 'github' ,credential*/;
+  provider: 'credential'|'google' /* e.g., 'google', 'facebook', 'github' ,credential*/;
   providerId: string;
   accessToken?: string;
   refreshToken?: string;
@@ -11,7 +11,7 @@ export enum Role {
   SUPER_ADMIN = "SUPER_ADMIN",
   ADMIN = "ADMIN",
   USER = "USER",
-  GUID = "GUIDE",
+  GUIDE = "GUIDE",
 }
 export enum isActive {
   ACTIVE = "ACTIVE",
@@ -32,7 +32,7 @@ export interface IUser {
   role: Role;
   auths: IAuthProvider[];
   bookings?: Types.ObjectId[];
-  guids?: Types.ObjectId[];
+  guides?: Types.ObjectId[];
   createdAt?: Date;
   updatedAt?: Date;
 }
