@@ -4,7 +4,7 @@ export const generateJwtToken = (
   payload: JwtPayload,
   secret: string,
   expiredIn: string,
-  algorithm: "HS256" | "HS384" | "HS512" = "HS256" // default to HS256
+  algorithm: string // default to HS256
 ) => {
   const token = Jwt.sign(payload, secret, {
     expiresIn: expiredIn,
