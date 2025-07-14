@@ -69,6 +69,6 @@ export const createNewAccessTokenWithRefreshToken = async (
     envVariable?.JWT_EXPIRES_IN,
     JWT_ALGORITHM.HS256
   );
-
+  // console.log(accessToken);
   return accessToken;
 };

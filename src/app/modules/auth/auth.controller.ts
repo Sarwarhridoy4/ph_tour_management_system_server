@@ -4,19 +4,11 @@ import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
 import { AuthServices } from "./auth.service";
 import AppError from "../../errorHelper/AppError";
+import { removeAuthCookie, setAuthCookie } from "../../utils/setCookie";
 
 const credentialLogin = catchAsync(async (req: Request, res: Response) => {
   const loginInfo = await AuthServices.credentialLogin(req.body);
-  res.cookie("refreshToken", loginInfo?.refreshToken, {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-  });
-  res.cookie('accessToken', loginInfo?.accessToken, {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-  })
+  setAuthCookie(res, loginInfo);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -38,7 +30,18 @@ const getNewAccessToken = catchAsync(async (req: Request, res: Response) => {
     data: tokenInfo,
   });
 });
+const logout = catchAsync(async (req: Request, res: Response) => {
+  removeAuthCookie(res);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "User Logged Out Successfully",
+    data: null,
+  });
+});
 export const AuthControllers = {
   credentialLogin,
   getNewAccessToken,
+  logout,
 };
