@@ -68,7 +68,7 @@ const getNewAccessToken = async (refreshToken: string) => {
   const accessToken = generateJwtToken(
     jwtPayload,
     envVariable?.JWT_SECRET,
-    envVariable?.JWT_ALGORITHM,
+    envVariable?.JWT_EXPIRES_IN,
     JWT_ALGORITHM.HS256
   );
   return {
