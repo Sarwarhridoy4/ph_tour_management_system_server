@@ -1,10 +1,12 @@
 import AppError from "../../errorHelper/AppError";
-import { IUser } from "../user/user.interface";
+import { isActive, IUser } from "../user/user.interface";
 import { User } from "../user/user.model";
 import httpStatus from "http-status-codes";
 import bcryptjs from "bcryptjs";
-import { envVariable } from "../../config/env";
-import { generateJwtToken } from "../../utils/generateJwtToken";
+import { createUserTokens } from "../../utils/userTokens";
+import { generateJwtToken, verifyToken } from "../../utils/generateJwtToken";
+import { envVariable, JWT_ALGORITHM } from "../../config/env";
+import { JwtPayload } from "jsonwebtoken";
 
 const credentialLogin = async (payload: Partial<IUser>) => {
   const { email, password } = payload;
@@ -22,37 +24,59 @@ const credentialLogin = async (payload: Partial<IUser>) => {
     throw new AppError(httpStatus.BAD_REQUEST, "Password Does Not Matched!");
   }
 
-  const jwtPayload = {
-    userId: UserExist._id,
-    email: UserExist.email,
-    role: UserExist.role,
-  };
-
-  const accessToken = generateJwtToken(
-    jwtPayload,
-    envVariable.JWT_SECRET,
-    envVariable.JWT_EXPIRES_IN,
-    envVariable.JWT_ALGORITHM
-  );
-
-  const refreshToken = generateJwtToken(
-    jwtPayload,
-    envVariable.JWT_REFRESH_SECRET,
-    envVariable.JWT_REFRESH_EXPIRE,
-    envVariable.JWT_ALGORITHM
-  );
+  const userTokens = createUserTokens(UserExist);
 
   // Remove password from the user object before returning
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   const { password: _, ...userWithoutPassword } = UserExist.toObject();
 
   return {
-    accessToken,
-    refreshToken,
+    accessToken: userTokens?.accessToken,
+    refreshToken: userTokens?.refreshToken,
     user: userWithoutPassword,
+  };
+};
+
+const getNewAccessToken = async (refreshToken: string) => {
+  const verifyRefreshToken = verifyToken(
+    refreshToken,
+    envVariable?.JWT_REFRESH_SECRET
+  ) as JwtPayload;
+  const ifUserExist = await User.findOne({
+    email: verifyRefreshToken?.email,
+  } as JwtPayload);
+  if (!ifUserExist) {
+    throw new AppError(httpStatus.BAD_REQUEST, "User does not exist!");
+  }
+  if (
+    ifUserExist.isActive === isActive.BLOCKED ||
+    ifUserExist.isActive === isActive.INACTIVE
+  ) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `User is ${ifUserExist?.isActive}`
+    );
+  }
+  if (ifUserExist.isActive === isActive.DELETED) {
+    throw new AppError(httpStatus.BAD_REQUEST, "User is deleted!");
+  }
+  const jwtPayload = {
+    userId: ifUserExist?._id,
+    email: ifUserExist?.email,
+    role: ifUserExist?.role,
+  };
+  const accessToken = generateJwtToken(
+    jwtPayload,
+    envVariable?.JWT_SECRET,
+    envVariable?.JWT_ALGORITHM,
+    JWT_ALGORITHM.HS256
+  );
+  return {
+    accessToken,
   };
 };
 
 export const AuthServices = {
   credentialLogin,
+  getNewAccessToken,
 };
