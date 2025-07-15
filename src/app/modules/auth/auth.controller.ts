@@ -6,6 +6,8 @@ import { AuthServices } from "./auth.service";
 import AppError from "../../errorHelper/AppError";
 import { removeAuthCookie, setAuthCookie } from "../../utils/setCookie";
 import { JwtPayload } from "jsonwebtoken";
+import { createUserTokens } from "../../utils/userTokens";
+import { envVariable } from "../../config/env";
 
 const credentialLogin = catchAsync(async (req: Request, res: Response) => {
   const loginInfo = await AuthServices.credentialLogin(req.body);
@@ -60,8 +62,39 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
     data: null,
   });
 });
+
+const googleCallbackController = catchAsync(
+  async (req: Request, res: Response) => {
+    let redirectTo = req.query.state ? (req.query.state as string) : "";
+
+    if (redirectTo.startsWith("/")) {
+      redirectTo = redirectTo.slice(1);
+    }
+
+    // /booking => booking , => "/" => ""
+    const user = req.user;
+
+    if (!user) {
+      throw new AppError(httpStatus.NOT_FOUND, "User Not Found");
+    }
+
+    const tokenInfo = createUserTokens(user);
+
+    setAuthCookie(res, tokenInfo);
+
+    // sendResponse(res, {
+    //     success: true,
+    //     statusCode: httpStatus.OK,
+    //     message: "Password Changed Successfully",
+    //     data: null,
+    // })
+
+    res.redirect(`${envVariable.FRONTEND}/${redirectTo}`);
+  }
+);
 export const AuthControllers = {
   credentialLogin,
+  googleCallbackController,
   getNewAccessToken,
   resetPassword,
   logout,
